@@ -4,6 +4,10 @@
     let { data }: { data: PageData } = $props();
 </script>
 
+<svelte:head>
+    <title>Error :(</title>
+</svelte:head>
+
 <div class = "body">
     <h3>An error occured during launch!</h3>
     <a href="/">Home</a>

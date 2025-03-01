@@ -24,6 +24,9 @@
     });
 </script>
 
+<svelte:head>
+    <title>Launching into space!</title>
+</svelte:head>
 <div class = "body">
 <div class = "back-bttn">
     <a href = "/">Back</a>

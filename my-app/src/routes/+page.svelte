@@ -3,12 +3,17 @@
     import { writable } from 'svelte/store';
     import { enhance } from '$app/forms';
 
-    let showTime = true;
+
+    let showTime = $state(true);
 
     function swapShowTime() {
         showTime = !showTime;
     }
 </script>
+
+<svelte:head>
+    <title>Time Capsule</title>
+</svelte:head>
 
 <div class="body">
     <div class="container">
