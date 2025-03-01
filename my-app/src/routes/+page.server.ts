@@ -1,6 +1,16 @@
 import type { PageServerLoad } from './$types';
 import { isRedirect, redirect } from '@sveltejs/kit';
 
+import { Resend } from "resend";
+
+import { env } from "$env/dynamic/private";
+
+const RESEND_API_KEY = env.RESEND_API_KEY;
+
+const resend = new Resend(RESEND_API_KEY as string);
+
+
+
 
 export const actions = {
     /**
@@ -16,9 +26,7 @@ export const actions = {
         try {
             const formData = await request.formData();
 
-            let data = {
-
-            }
+            let data: { email: FormDataEntryValue | null, time: string, message: FormDataEntryValue | null, image: FormDataEntryValue | null };
 
             //checks if the time is random or not
             if (formData.get("randomTime") != "null") {
@@ -33,7 +41,7 @@ export const actions = {
             } else {
                 data = {
                     email: formData.get("email"),
-                    time: formData.get("time"),
+                    time: formData.get("time") as string || "",
                     message: formData.get("message"),
                     image: formData.get("image")
                 }
@@ -48,6 +56,8 @@ export const actions = {
             //     },
             //     body: JSON.stringify(data)
             // });
+
+            sendEmail(data.email as string, "Time Capsule Reminder", "Your time capsule will become publicly accessible at " + data.time + ".");
 
             //redirects to the launch page
             throw redirect(302,"/launch");
@@ -64,3 +74,17 @@ export const actions = {
 
 
 
+/**
+ * Sends an email to the recipient
+ * @param recipient
+ * @param subject
+ * @param message
+ */
+function sendEmail(recipient: string, subject: string, message: string) {
+    resend.emails.send({
+      from: "donotreply@pathway404.com",
+      to: recipient,
+      subject: subject,
+      html: message,
+    });
+  }
