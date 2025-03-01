@@ -8,7 +8,7 @@ export const load = (async () => {
 
 export const actions = {
     //Posts the details to the postAPI
-    postDetails: async ({ request }) => {
+    postDetails: async ({ request }: { request: Request }) => {
 
         try {
             console.log("entering the posting");
@@ -17,8 +17,8 @@ export const actions = {
             let data = {
 
             }
-
-            if (formData.get("randomTime") === "true") {
+            console.log("random time is " + formData.get("randomTime"));
+            if (formData.get("randomTime") != "null") {
                 let randomTime = new Date(Date.now() + Math.floor(Math.random() * 1000 * 60 * 60 * 24)).toISOString();
 
                 data = {

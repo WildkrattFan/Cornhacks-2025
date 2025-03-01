@@ -1,5 +1,9 @@
 <script>
+    import { onMount } from 'svelte';
+
     let index = 0; // Define the index variable
+    /** @type {{ x: number, y: number, color: string, size: number, speed: number }[]} */
+    let planets = [];
 
     // Random position generator for planets
     function randomPosition() {
@@ -9,14 +13,21 @@
         };
     }
 
-    // Array of planets with random positions and colors
-    let planets = Array.from({ length: 5 }, () => ({
-        ...randomPosition(),
-        color: `hsl(${Math.random() * 360}, 70%, 60%)`,
-        size: Math.random() * 40 + 20,
-        speed: Math.random() * 10 + 5
-    }));
+    onMount(() => {
+        // Array of planets with random positions and colors
+        planets = Array.from({ length: 5 }, () => ({
+            ...randomPosition(),
+            color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+            size: Math.random() * 40 + 20,
+            speed: Math.random() * 10 + 5
+        }));
+    });
 </script>
+
+<div class = "body">
+<div class = "back-bttn">
+    <a href = "/">Back</a>
+    </div>
 
 <div class="launch-container" style="animation-delay: {index * 0.5}s;">
     <div class="rocket">
@@ -29,9 +40,18 @@
         style="top: {planet.y}px; left: {planet.x}px; background-color: {planet.color}; width: {planet.size}px; height: {planet.size}px; animation-duration: {planet.speed}s;">
     </div>
 {/each}
+</div>
 
 <style>
     :global(body) {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: black;
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+    .body{
         background-color: black;
         overflow: hidden;
     }
@@ -126,5 +146,19 @@
         100% {
             height: 60px;
         }
+    }
+    .back-bttn{
+        position: absolute;
+        top: 5;
+        left: 5;
+        padding: 5px;
+        border-radius: 5px;
+        background-color: blue;
+        color: white;
+        text-decoration: none;
+    }
+    a{
+        text-decoration: none;
+        color: white;
     }
 </style>
