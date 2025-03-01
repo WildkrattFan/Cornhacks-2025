@@ -1,23 +1,26 @@
 import type { PageServerLoad } from './$types';
 import { isRedirect, redirect } from '@sveltejs/kit';
 
-export const load = (async () => {
-    return {};
-}) satisfies PageServerLoad;
-
 
 export const actions = {
-    //Posts the details to the postAPI
+    /**
+     * postDetails to the postAPI and redirects to the launch page if successful
+     * if not successful, redirects to the error page
+     * 
+     * @param request
+     * @throws {redirect}
+     * @returns {Promise<any>}
+     */
     postDetails: async ({ request }: { request: Request }) => {
 
         try {
-            console.log("entering the posting");
             const formData = await request.formData();
 
             let data = {
 
             }
-            console.log("random time is " + formData.get("randomTime"));
+
+            //checks if the time is random or not
             if (formData.get("randomTime") != "null") {
                 let randomTime = new Date(Date.now() + Math.floor(Math.random() * 1000 * 60 * 60 * 24)).toISOString();
 
@@ -35,7 +38,6 @@ export const actions = {
                     image: formData.get("image")
                 }
             }
-            console.log(data);
 
             //posts the data to the postAPI
 
@@ -47,10 +49,14 @@ export const actions = {
             //     body: JSON.stringify(data)
             // });
 
+            //redirects to the launch page
             throw redirect(302,"/launch");
         } catch (err) {
             if(isRedirect(err)){
                 throw redirect(err.status,err.location);
+            }
+            else{
+                throw redirect(500,"/error");
             }
         }
     }
