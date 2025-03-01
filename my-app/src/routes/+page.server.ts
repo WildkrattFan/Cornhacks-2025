@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types';
+import { isRedirect, redirect } from '@sveltejs/kit';
 
 export const load = (async () => {
     return {};
@@ -46,11 +47,14 @@ export const actions = {
             //     body: JSON.stringify(data)
             // });
 
-            return { success: true };
+            throw redirect(302,"/launch");
         } catch (err) {
-            console.log(err);
-            return { success: false };
+            if(isRedirect(err)){
+                throw redirect(err.status,err.location);
+            }
         }
     }
 }
+
+
 
