@@ -7,7 +7,7 @@ export const actions = {
         try {
             const formData = await request.formData();
 
-            let data: { email: FormDataEntryValue | null, time: string, message: FormDataEntryValue | null, image: File | null };
+            let data: { email: FormDataEntryValue | null, time: string, message: FormDataEntryValue | null };
 
             if (formData.get("randomTime") != "null") {
                 let randomTime = new Date(Date.now() + Math.floor(Math.random() * 1000 * 60 * 60 * 24)).toISOString();
@@ -16,14 +16,14 @@ export const actions = {
                     email: formData.get("email") || "",
                     time: randomTime || "",
                     message: formData.get("message") || "",
-                    image: formData.get("image") as File || null
+
                 }
             } else {
                 data = {
                     email: formData.get("email") || "",
                     time: formData.get("time") as string || "",
                     message: formData.get("message") || "",
-                    image: formData.get("image") as File || null
+
                 }
             }
 
@@ -43,12 +43,11 @@ export const actions = {
                 try {
                     const response = await axios.post(url, {
                         headers: {
-                            'Content-Type': 'form-data',
+                            'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(data),
+                        // body: JSON.stringify(data),
                         timeout: 10000, // Increase timeout to 10 seconds
                     });
-                    // console.log(response.data);
                 } catch (error) {
                     console.error('Error uploading photo:', error);
                 }
