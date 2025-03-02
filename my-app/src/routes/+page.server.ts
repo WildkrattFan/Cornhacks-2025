@@ -7,7 +7,7 @@ export const actions = {
         try {
             const formData = await request.formData();
 
-            let data: { email: FormDataEntryValue | null, time: string, message: FormDataEntryValue | null };
+            let data: { email: FormDataEntryValue | null, time: string, message: FormDataEntryValue | null, image: File | null } ;
 
             if (formData.get("randomTime") != "null") {
                 let randomTime = new Date(Date.now() + Math.floor(Math.random() * 1000 * 60 * 60 * 24)).toISOString();
@@ -16,14 +16,14 @@ export const actions = {
                     email: formData.get("email") || "",
                     time: randomTime || "",
                     message: formData.get("message") || "",
-
+                    image: formData.get("image") as File || null,
                 }
             } else {
                 data = {
                     email: formData.get("email") || "",
                     time: formData.get("time") as string || "",
                     message: formData.get("message") || "",
-
+                    image: formData.get("image") as File || null,
                 }
             }
 
