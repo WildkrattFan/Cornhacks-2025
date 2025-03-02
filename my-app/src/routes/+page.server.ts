@@ -13,17 +13,17 @@ export const actions = {
                 let randomTime = new Date(Date.now() + Math.floor(Math.random() * 1000 * 60 * 60 * 24)).toISOString();
 
                 data = {
-                    email: formData.get("email"),
-                    time: randomTime,
-                    message: formData.get("message"),
-                    image: formData.get("image") as File | null
+                    email: formData.get("email") || "",
+                    time: randomTime || "",
+                    message: formData.get("message") || "",
+                    image: formData.get("image") as File || null
                 }
             } else {
                 data = {
-                    email: formData.get("email"),
+                    email: formData.get("email") || "",
                     time: formData.get("time") as string || "",
-                    message: formData.get("message"),
-                    image: formData.get("image") as File | null
+                    message: formData.get("message") || "",
+                    image: formData.get("image") as File || null
                 }
             }
 
@@ -35,35 +35,34 @@ export const actions = {
 
 
             // Function to upload the photo
-            const uploadPhoto = async () => {
-                const formData = new FormData();
-                if (data.image) {
-                    formData.append('file', data.image);
-                }
+            const postToAPI = async () => {
+
+
 
 
                 try {
-                    const response = await axios.post(url, formData, {
+                    const response = await axios.post(url, {
                         headers: {
-                            'Content-Type': 'multipart/form-data',
+                            'Content-Type': 'form-data',
                         },
+                        body: JSON.stringify(data),
                         timeout: 10000, // Increase timeout to 10 seconds
                     });
-                    console.log(response.data);
+                    // console.log(response.data);
                 } catch (error) {
                     console.error('Error uploading photo:', error);
                 }
             };
 
             // Call the function to upload the photo
-            await uploadPhoto();
+            await postToAPI();
 
             // sendEmail(data.email as string, "Time Capsule Reminder", "Your time capsule will become publicly accessible at " + data.time + ".");
 
             // Redirect to the launch page
             throw redirect(302, "/launch");
         } catch (err) {
-            console.error('Error in postDetails action:', err);
+            
             if (isRedirect(err)) {
                 throw redirect(err.status, err.location);
             } else {
