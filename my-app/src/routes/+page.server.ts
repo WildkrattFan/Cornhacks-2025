@@ -1,20 +1,13 @@
 import type { PageServerLoad } from './$types';
 import { isRedirect, redirect } from '@sveltejs/kit';
-
-// import { Resend } from "resend";
-
-// import { env } from "$env/dynamic/private";
-
-// const RESEND_API_KEY = env.RESEND_API_KEY;
-
-// const resend = new Resend(RESEND_API_KEY as string);
+import axios from 'axios';
 
 export const actions = {
     postDetails: async ({ request }: { request: Request }) => {
         try {
             const formData = await request.formData();
 
-            let data: { email: FormDataEntryValue | null, time: string, message: FormDataEntryValue | null, image: FormDataEntryValue | null };
+            let data: { email: FormDataEntryValue | null, time: string, message: FormDataEntryValue | null, image: File | null };
 
             if (formData.get("randomTime") != "null") {
                 let randomTime = new Date(Date.now() + Math.floor(Math.random() * 1000 * 60 * 60 * 24)).toISOString();
@@ -23,36 +16,51 @@ export const actions = {
                     email: formData.get("email"),
                     time: randomTime,
                     message: formData.get("message"),
-                    image: formData.get("image")
+                    image: formData.get("image") as File | null
                 }
             } else {
                 data = {
                     email: formData.get("email"),
                     time: formData.get("time") as string || "",
                     message: formData.get("message"),
-                    image: formData.get("image")
+                    image: formData.get("image") as File | null
                 }
             }
 
             // Log the data being sent for debugging
             console.log('Data being sent to API:', data);
 
-            //posts the data to the postAPI
-            const response = await fetch("http://localhost:8000/upload", {
-                method: "POST",
-                body: formData,
-            });
+            // Define the URL and form data
+            const url = 'http://localhost:8000/api/upload';
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
 
-            console.log('API response status:', response.status);
-            console.log('API response body:', await response.text());
+            // Function to upload the photo
+            const uploadPhoto = async () => {
+                const formData = new FormData();
+                if (data.image) {
+                    formData.append('file', data.image);
+                }
+
+
+                try {
+                    const response = await axios.post(url, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                        timeout: 10000, // Increase timeout to 10 seconds
+                    });
+                    console.log(response.data);
+                } catch (error) {
+                    console.error('Error uploading photo:', error);
+                }
+            };
+
+            // Call the function to upload the photo
+            await uploadPhoto();
 
             // sendEmail(data.email as string, "Time Capsule Reminder", "Your time capsule will become publicly accessible at " + data.time + ".");
 
-            //redirects to the launch page
+            // Redirect to the launch page
             throw redirect(302, "/launch");
         } catch (err) {
             console.error('Error in postDetails action:', err);
